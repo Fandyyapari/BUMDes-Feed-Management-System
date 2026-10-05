@@ -40,16 +40,16 @@ class FeedProductsTable
                     ->money('IDR', locale: 'id')
                     ->sortable(),
 
-                TextColumn::make('receipts_sum_quantity')
+                TextColumn::make('active_receipts_sum_quantity')
                     ->label('Total Masuk')
-                    ->sum('receipts', 'quantity')
+                    ->sum('activeReceipts', 'quantity')
                     ->default(0)
                     ->numeric(decimalPlaces: 0, locale: 'id')
                     ->suffix(' kemasan'),
 
-                TextColumn::make('issues_sum_quantity')
+                TextColumn::make('active_issues_sum_quantity')
                     ->label('Total Keluar')
-                    ->sum('issues', 'quantity')
+                    ->sum('activeIssues', 'quantity')
                     ->default(0)
                     ->numeric(decimalPlaces: 0, locale: 'id')
                     ->suffix(' kemasan'),
@@ -58,8 +58,8 @@ class FeedProductsTable
                     ->label('Sisa Stok')
                     ->state(
                         fn(FeedProduct $record): int =>
-                        (int) ($record->receipts_sum_quantity ?? 0)
-                            - (int) ($record->issues_sum_quantity ?? 0)
+                        (int) ($record->active_receipts_sum_quantity ?? 0)
+                            - (int) ($record->active_issues_sum_quantity ?? 0)
                     )
                     ->numeric(decimalPlaces: 0, locale: 'id')
                     ->suffix(' kemasan'),

@@ -19,6 +19,16 @@ class FeedReceiptsTable
                     ->searchable()
                     ->sortable(),
 
+                TextColumn::make('status')
+                    ->label('Status')
+                    ->state(fn($record): string => $record->isCancelled()
+                        ? 'Dibatalkan'
+                        : 'Aktif')
+                    ->badge()
+                    ->color(fn(string $state): string => $state === 'Dibatalkan'
+                        ? 'danger'
+                        : 'success'),
+
                 TextColumn::make('received_at')
                     ->label('Tanggal Diterima')
                     ->date('d/m/Y')
