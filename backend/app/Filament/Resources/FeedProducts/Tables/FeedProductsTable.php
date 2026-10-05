@@ -39,6 +39,13 @@ class FeedProductsTable
                     ->money('IDR', locale: 'id')
                     ->sortable(),
 
+                TextColumn::make('receipts_sum_quantity')
+                    ->label('Total Pakan Masuk')
+                    ->sum('receipts', 'quantity')
+                    ->default(0)
+                    ->numeric(decimalPlaces: 0, locale: 'id')
+                    ->suffix(' kemasan'),
+
                 IconColumn::make('is_active')
                     ->label('Aktif')
                     ->boolean(),
