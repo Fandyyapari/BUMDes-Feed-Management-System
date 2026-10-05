@@ -6,6 +6,7 @@ use App\Models\FeedIssue;
 use App\Models\FeedProduct;
 use App\Models\FeedReceipt;
 use App\Models\User;
+use App\Models\FeedSale;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -14,10 +15,10 @@ use Illuminate\Validation\ValidationException;
 class FeedCancellationService
 {
     public function cancel(
-        FeedReceipt|FeedIssue $record,
+        FeedReceipt|FeedIssue|FeedSale $record,
         string $reason,
         User $actor
-    ): FeedReceipt|FeedIssue {
+    ): FeedReceipt|FeedIssue|FeedSale {
         // Periksa izin akun dari database.
         $user = $actor->fresh();
 
@@ -70,14 +71,14 @@ class FeedCancellationService
             ) {
                 throw ValidationException::withMessages([
                     'cancellation_reason' =>
-                        'Data produk berubah. Muat ulang halaman.',
+                    'Data produk berubah. Muat ulang halaman.',
                 ]);
             }
 
             if ($transaction->isCancelled()) {
                 throw ValidationException::withMessages([
                     'cancellation_reason' =>
-                        'Transaksi ini sudah dibatalkan.',
+                    'Transaksi ini sudah dibatalkan.',
                 ]);
             }
 
@@ -89,7 +90,7 @@ class FeedCancellationService
                 if ($stock < $quantity) {
                     throw ValidationException::withMessages([
                         'cancellation_reason' =>
-                            "Pembatalan ditolak. Stok tersisa {$stock} kemasan, "
+                        "Pembatalan ditolak. Stok tersisa {$stock} kemasan, "
                             . "sedangkan transaksi ini berjumlah {$quantity} kemasan.",
                     ]);
                 }
