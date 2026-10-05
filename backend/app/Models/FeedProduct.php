@@ -38,8 +38,9 @@ class FeedProduct extends Model
     {
         $totalMasuk = (int) $this->activeReceipts()->sum('quantity');
         $totalKeluar = (int) $this->activeIssues()->sum('quantity');
+        $totalTerjual = (int) $this->activeSales()->sum('quantity');
 
-        return $totalMasuk - $totalKeluar;
+        return $totalMasuk - $totalKeluar - $totalTerjual;
     }
 
     public function activeReceipts(): HasMany
@@ -50,5 +51,15 @@ class FeedProduct extends Model
     public function activeIssues(): HasMany
     {
         return $this->issues()->whereNull('cancelled_at');
+    }
+
+    public function sales(): HasMany
+    {
+        return $this->hasMany(FeedSale::class);
+    }
+
+    public function activeSales(): HasMany
+    {
+        return $this->sales()->whereNull('cancelled_at');
     }
 }

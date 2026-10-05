@@ -60,7 +60,15 @@ class FeedProductsTable
                         fn(FeedProduct $record): int =>
                         (int) ($record->active_receipts_sum_quantity ?? 0)
                             - (int) ($record->active_issues_sum_quantity ?? 0)
+                            - (int) ($record->active_sales_sum_quantity ?? 0)
                     )
+                    ->numeric(decimalPlaces: 0, locale: 'id')
+                    ->suffix(' kemasan'),
+
+                TextColumn::make('active_sales_sum_quantity')
+                    ->label('Total Terjual')
+                    ->sum('activeSales', 'quantity')
+                    ->default(0)
                     ->numeric(decimalPlaces: 0, locale: 'id')
                     ->suffix(' kemasan'),
 
