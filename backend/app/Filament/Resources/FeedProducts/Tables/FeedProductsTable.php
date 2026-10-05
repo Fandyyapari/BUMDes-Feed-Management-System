@@ -8,6 +8,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use App\Models\FeedProduct;
 
 class FeedProductsTable
 {
@@ -40,9 +41,26 @@ class FeedProductsTable
                     ->sortable(),
 
                 TextColumn::make('receipts_sum_quantity')
-                    ->label('Total Pakan Masuk')
+                    ->label('Total Masuk')
                     ->sum('receipts', 'quantity')
                     ->default(0)
+                    ->numeric(decimalPlaces: 0, locale: 'id')
+                    ->suffix(' kemasan'),
+
+                TextColumn::make('issues_sum_quantity')
+                    ->label('Total Keluar')
+                    ->sum('issues', 'quantity')
+                    ->default(0)
+                    ->numeric(decimalPlaces: 0, locale: 'id')
+                    ->suffix(' kemasan'),
+
+                TextColumn::make('available_stock')
+                    ->label('Sisa Stok')
+                    ->state(
+                        fn(FeedProduct $record): int =>
+                        (int) ($record->receipts_sum_quantity ?? 0)
+                            - (int) ($record->issues_sum_quantity ?? 0)
+                    )
                     ->numeric(decimalPlaces: 0, locale: 'id')
                     ->suffix(' kemasan'),
 

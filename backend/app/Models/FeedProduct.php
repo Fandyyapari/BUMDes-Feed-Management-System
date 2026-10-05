@@ -29,4 +29,16 @@ class FeedProduct extends Model
     {
         return $this->hasMany(FeedReceipt::class);
     }
+    public function issues(): HasMany
+    {
+        return $this->hasMany(FeedIssue::class);
+    }
+
+    public function availableStock(): int
+    {
+        $totalMasuk = (int) $this->receipts()->sum('quantity');
+        $totalKeluar = (int) $this->issues()->sum('quantity');
+
+        return $totalMasuk - $totalKeluar;
+    }
 }

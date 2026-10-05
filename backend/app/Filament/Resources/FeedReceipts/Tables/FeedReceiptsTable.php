@@ -68,9 +68,6 @@ class FeedReceiptsTable
             ->recordActions([
                 ViewAction::make()
                     ->label('Lihat'),
-
-                EditAction::make()
-                    ->label('Ubah'),
             ])
             ->emptyStateHeading('Belum ada pakan masuk')
             ->emptyStateDescription(

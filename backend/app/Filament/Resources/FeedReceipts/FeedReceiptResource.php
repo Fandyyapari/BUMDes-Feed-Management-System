@@ -15,11 +15,12 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class FeedReceiptResource extends Resource
 {
     protected static ?string $navigationLabel = 'Pakan Masuk';
-    
+
     protected static ?string $modelLabel = 'Pakan Masuk';
 
     protected static ?string $pluralModelLabel = 'Pakan Masuk';
@@ -52,13 +53,27 @@ class FeedReceiptResource extends Resource
         ];
     }
 
+    public static function canEdit(Model $record): bool
+    {
+        return false;
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return false;
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => ListFeedReceipts::route('/'),
             'create' => CreateFeedReceipt::route('/create'),
             'view' => ViewFeedReceipt::route('/{record}'),
-            'edit' => EditFeedReceipt::route('/{record}/edit'),
         ];
     }
 }
