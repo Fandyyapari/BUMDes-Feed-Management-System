@@ -36,9 +36,19 @@ class FeedProduct extends Model
 
     public function availableStock(): int
     {
-        $totalMasuk = (int) $this->receipts()->sum('quantity');
-        $totalKeluar = (int) $this->issues()->sum('quantity');
+        $totalMasuk = (int) $this->activeReceipts()->sum('quantity');
+        $totalKeluar = (int) $this->activeIssues()->sum('quantity');
 
         return $totalMasuk - $totalKeluar;
+    }
+
+    public function activeReceipts(): HasMany
+    {
+        return $this->receipts()->whereNull('cancelled_at');
+    }
+
+    public function activeIssues(): HasMany
+    {
+        return $this->issues()->whereNull('cancelled_at');
     }
 }

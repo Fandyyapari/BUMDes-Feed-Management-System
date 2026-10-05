@@ -29,7 +29,7 @@ class FeedIssueInfolist
                 TextEntry::make('reason')
                     ->label('Alasan Pengeluaran')
                     ->formatStateUsing(
-                        fn (string $state): string => match ($state) {
+                        fn(string $state): string => match ($state) {
                             'percontohan' => 'Percontohan / Uji Coba',
                             'rusak' => 'Pakan Rusak',
                             'kedaluwarsa' => 'Pakan Kedaluwarsa',
@@ -49,6 +49,22 @@ class FeedIssueInfolist
                 TextEntry::make('created_at')
                     ->label('Waktu Pencatatan')
                     ->dateTime('d/m/Y H:i'),
+
+                TextEntry::make('cancelled_at')
+                    ->label('Waktu Pembatalan (WIB)')
+                    ->dateTime('d/m/Y H:i')
+                    ->timezone('Asia/Jakarta')
+                    ->visible(fn($record): bool => $record->isCancelled()),
+
+                TextEntry::make('cancelledBy.name')
+                    ->label('Dibatalkan Oleh')
+                    ->placeholder('Tidak tersedia')
+                    ->visible(fn($record): bool => $record->isCancelled()),
+
+                TextEntry::make('cancellation_reason')
+                    ->label('Alasan Pembatalan')
+                    ->columnSpanFull()
+                    ->visible(fn($record): bool => $record->isCancelled()),
             ]);
     }
 }

@@ -17,6 +17,16 @@ class FeedIssuesTable
                     ->label('Nomor Pengeluaran')
                     ->searchable(),
 
+                TextColumn::make('status')
+                    ->label('Status')
+                    ->state(fn($record): string => $record->isCancelled()
+                        ? 'Dibatalkan'
+                        : 'Aktif')
+                    ->badge()
+                    ->color(fn(string $state): string => $state === 'Dibatalkan'
+                        ? 'danger'
+                        : 'success'),
+
                 TextColumn::make('issued_at')
                     ->label('Tanggal Keluar')
                     ->date('d/m/Y')
@@ -36,7 +46,7 @@ class FeedIssuesTable
                 TextColumn::make('reason')
                     ->label('Alasan')
                     ->formatStateUsing(
-                        fn (string $state): string => match ($state) {
+                        fn(string $state): string => match ($state) {
                             'percontohan' => 'Percontohan / Uji Coba',
                             'rusak' => 'Pakan Rusak',
                             'kedaluwarsa' => 'Pakan Kedaluwarsa',

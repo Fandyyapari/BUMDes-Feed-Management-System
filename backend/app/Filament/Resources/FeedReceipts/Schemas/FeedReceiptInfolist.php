@@ -46,6 +46,22 @@ class FeedReceiptInfolist
                 ->label('Catatan Penerimaan')
                 ->placeholder('Tidak ada catatan')
                 ->columnSpanFull(),
+
+            TextEntry::make('cancelled_at')
+                ->label('Waktu Pembatalan (WIB)')
+                ->dateTime('d/m/Y H:i')
+                ->timezone('Asia/Jakarta')
+                ->visible(fn($record): bool => $record->isCancelled()),
+
+            TextEntry::make('cancelledBy.name')
+                ->label('Dibatalkan Oleh')
+                ->placeholder('Tidak tersedia')
+                ->visible(fn($record): bool => $record->isCancelled()),
+
+            TextEntry::make('cancellation_reason')
+                ->label('Alasan Pembatalan')
+                ->columnSpanFull()
+                ->visible(fn($record): bool => $record->isCancelled()),
         ]);
     }
 }

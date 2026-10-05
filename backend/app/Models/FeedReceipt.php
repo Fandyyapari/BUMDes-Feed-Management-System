@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+
 class FeedReceipt extends Model
 {
     protected $fillable = [
@@ -17,6 +18,8 @@ class FeedReceipt extends Model
         'unit_cost',
         'expires_at',
         'notes',
+
+
     ];
 
     protected function casts(): array
@@ -26,11 +29,22 @@ class FeedReceipt extends Model
             'expires_at' => 'date',
             'quantity' => 'integer',
             'unit_cost' => 'decimal:2',
+            'cancelled_at' => 'datetime',
         ];
     }
 
     public function feedProduct(): BelongsTo
     {
         return $this->belongsTo(FeedProduct::class);
+    }
+
+    public function cancelledBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'cancelled_by');
+    }
+
+    public function isCancelled(): bool
+    {
+        return $this->cancelled_at !== null;
     }
 }
