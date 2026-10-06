@@ -15,6 +15,9 @@ class FeedProduct extends Model
         'price',
         'description',
         'is_active',
+        'composition',
+        'usage_instructions',
+        'storage_instructions',
     ];
 
     protected function casts(): array
