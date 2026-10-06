@@ -9,16 +9,15 @@ class HomeController extends Controller
 {
     public function index(): View
     {
-        $products = FeedProduct::query()
+        $featuredProduct = FeedProduct::query()
             ->where('is_active', true)
-            ->withSum('activeReceipts', 'quantity')
-            ->withSum('activeIssues', 'quantity')
-            ->withSum('activeSales', 'quantity')
+            ->whereNotNull('image')
+            ->where('image', '!=', '')
             ->orderBy('name')
-            ->get();
+            ->first();
 
         return view('home', [
-            'products' => $products,
+            'featuredProduct' => $featuredProduct,
         ]);
     }
 }

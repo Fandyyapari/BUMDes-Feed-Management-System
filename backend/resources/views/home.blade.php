@@ -2,380 +2,515 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Pakan Fermentasi | BUMDes Desa Jarak</title>
+    <title>JarakFeed — BUMDes Desa Jarak</title>
 
     <style>
+        :root {
+            --green: #075734;
+            --green-dark: #043d24;
+            --cream: #faf8f1;
+            --text: #24382b;
+            --muted: #627065;
+            --border: #dedfd3;
+        }
+
         * {
             box-sizing: border-box;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
         body {
             margin: 0;
+            background: var(--cream);
+            color: var(--text);
             font-family: Arial, sans-serif;
-            background: #f7f9f6;
-            color: #20352b;
             line-height: 1.6;
         }
 
-        .container {
-            width: min(1100px, calc(100% - 32px));
-            margin: auto;
-        }
-
-        header {
-            background: white;
-            border-bottom: 1px solid #dfe7dc;
-        }
-
-        .navigation {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
-            padding: 20px 0;
-        }
-
-        .brand {
-            color: #246943;
-            font-size: 21px;
-            font-weight: bold;
-            text-decoration: none;
-        }
-
-        nav {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 18px;
-        }
-
-        nav a {
-            color: #20352b;
-            text-decoration: none;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 12px 20px;
-            border-radius: 10px;
-            background: #246943;
-            color: white;
-            font-weight: bold;
-            text-align: center;
-            text-decoration: none;
-        }
-
-        .button:hover {
-            background: #194e31;
+        a {
+            color: inherit;
         }
 
         a:focus-visible {
-            outline: 3px solid #ba7615;
-            outline-offset: 4px;
+            outline: 3px solid #bd891f;
+            outline-offset: 5px;
         }
 
-        .hero {
-            padding: 64px 0;
-            background: #eaf3e7;
+        .container {
+            width: min(1080px, calc(100% - 40px));
+            margin: auto;
         }
 
-        .eyebrow {
-            color: #246943;
-            font-weight: bold;
+        .header {
+            background: #fff;
+            border-bottom: 1px solid var(--border);
         }
 
-        h1 {
-            max-width: 760px;
-            margin: 12px 0 20px;
-            font-size: clamp(32px, 5vw, 50px);
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 18px 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: #e8efe2;
+            color: var(--green);
+        }
+
+        .brand-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .brand strong {
+            display: block;
+            color: var(--green);
+            font-size: 24px;
             line-height: 1.2;
         }
 
-        .hero p {
-            max-width: 650px;
+        .brand small {
+            color: var(--muted);
+            font-size: 12px;
         }
 
-        .hero .button {
-            margin-top: 12px;
+        .header-link {
+            color: var(--green);
+            font-weight: bold;
+            text-decoration: none;
+            padding: 10px 0;
         }
 
-        section {
-            padding: 44px 0;
-        }
-
-        h2 {
-            margin: 0 0 12px;
-            font-size: 28px;
-        }
-
-        .muted {
-            color: #59685e;
-        }
-
-        .product-grid {
+        .hero {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 24px;
-            margin-top: 24px;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+            padding: 56px 0;
         }
 
-        .product-card {
+        .eyebrow {
+            color: var(--green);
+            font-size: 14px;
+            font-weight: bold;
+            margin: 0 0 14px;
+        }
+
+        h1 {
+            font-size: clamp(34px, 5vw, 56px);
+            line-height: 1.15;
+            letter-spacing: -1.5px;
+            margin: 0 0 20px;
+        }
+
+        .hero-description {
+            color: var(--muted);
+            font-size: 18px;
+            margin: 0 0 28px;
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 12px 24px;
+            border: 1px solid var(--green);
+            border-radius: 12px;
+            font-weight: bold;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .button-primary {
+            color: #fff;
+            background: var(--green);
+        }
+
+        .button-primary:hover {
+            background: var(--green-dark);
+        }
+
+        .button-secondary {
+            color: var(--green);
+            background: transparent;
+        }
+
+        .button-secondary:hover {
+            background: #e8efe2;
+        }
+
+        .hero-visual {
+            margin: 0;
+            border-radius: 24px;
             overflow: hidden;
-            border: 1px solid #dfe7dc;
-            border-radius: 16px;
-            background: white;
+            background: #e8efe2;
+            border: 1px solid var(--border);
         }
 
-        .product-image,
-        .image-placeholder {
+        .hero-visual img {
+            display: block;
             width: 100%;
-            height: 220px;
-            background: #eaf0e7;
+            height: 360px;
             object-fit: cover;
         }
 
-        .image-placeholder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #59685e;
+        .photo-placeholder {
+            min-height: 360px;
+            display: grid;
+            place-items: center;
+            padding: 32px;
+            text-align: center;
+            color: var(--green);
+            background: linear-gradient(135deg, #e8efe2, #d4e3ce);
         }
 
-        .product-content {
-            padding: 24px;
+        .photo-placeholder strong {
+            display: block;
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        figcaption {
+            padding: 12px 18px;
+            background: #fff;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .section {
+            padding: 28px 0 48px;
+            scroll-margin-top: 20px;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        h2 {
+            font-size: 28px;
+            line-height: 1.3;
+            margin: 0 0 10px;
+        }
+
+        .section-heading p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .step {
+            background: #fff;
+            padding: 26px;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+        }
+
+        .step-number {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            color: var(--green);
+            background: #e8efe2;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 18px;
         }
 
         h3 {
             margin: 0 0 8px;
-            font-size: 21px;
-            overflow-wrap: anywhere;
+            font-size: 19px;
         }
 
-        .price {
-            color: #246943;
-            font-size: 24px;
-            font-weight: bold;
-            margin: 12px 0;
+        .step p {
+            margin: 0;
+            color: var(--muted);
         }
 
-        .price small {
-            color: #59685e;
-            font-size: 14px;
-            font-weight: normal;
+        .help {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            padding: 30px;
+            background: #e8efe2;
+            border-radius: 20px;
         }
 
-        .stock {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 8px;
-            background: #e7f3e8;
-            color: #215b35;
-            font-size: 14px;
-            font-weight: bold;
+        .help p {
+            margin: 0;
+            color: var(--muted);
+            max-width: 620px;
         }
 
-        .stock.empty {
-            background: #fff0df;
-            color: #7b4b15;
+        .help .button {
+            flex-shrink: 0;
         }
 
-        .description {
-            white-space: pre-line;
-            overflow-wrap: anywhere;
-        }
-
-        .notice {
-            padding: 24px;
-            background: white;
-            border: 1px solid #dfe7dc;
-            border-radius: 12px;
-        }
-
-        .about {
-            background: #eef3eb;
-        }
-
-        .about p {
-            max-width: 800px;
-        }
-
-        footer {
+        .footer {
+            border-top: 1px solid var(--border);
             padding: 24px 0;
-            background: #203d2c;
-            color: white;
+            margin-top: 12px;
+            font-size: 14px;
+            color: var(--muted);
         }
 
-        footer p {
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .footer p {
             margin: 0;
         }
 
-        @media (max-width: 900px) {
-            .product-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+        @media (max-width: 760px) {
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 28px;
+                padding: 28px 0 36px;
+            }
+
+            .hero-visual {
+                grid-row: 1;
+            }
+
+            .hero-visual img,
+            .photo-placeholder {
+                height: 260px;
+                min-height: 260px;
+            }
+
+            .steps {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .help {
+                align-items: flex-start;
+                flex-direction: column;
+                padding: 24px;
+            }
+
+            .help .button {
+                width: 100%;
             }
         }
 
-        @media (max-width: 600px) {
-            .product-grid {
-                grid-template-columns: 1fr;
+        @media (max-width: 400px) {
+            .container {
+                width: calc(100% - 28px);
             }
 
-            .hero {
-                padding: 40px 0;
+            .brand strong {
+                font-size: 21px;
             }
 
-            nav {
-                gap: 14px;
+            .header-link {
+                font-size: 14px;
+            }
+
+            .buttons {
+                flex-direction: column;
             }
         }
     </style>
 </head>
 
 <body>
-    <header>
-        <div class="container navigation">
-            <a class="brand" href="{{ route('home') }}">
-                BUMDes Desa Jarak
+    <header class="header">
+        <div class="container header-content">
+            <a class="brand" href="{{ route('home') }}" aria-label="Beranda JarakFeed">
+                <span class="brand-icon" aria-hidden="true">
+                    <svg viewBox="0 0 32 32" fill="none">
+                        <path
+                            d="M26 5C14 4 6 9 6 17a9 9 0 0 0 9 9c8 0 12-9 11-21Z"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        />
+                        <path
+                            d="M6 27 21 12M12 21v-7M17 16h7"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                        />
+                    </svg>
+                </span>
+
+                <span>
+                    <strong>JarakFeed</strong>
+                    <small>BUMDes Desa Jarak</small>
+                </span>
             </a>
 
-            <nav aria-label="Menu utama">
-                <a href="#produk">Produk Pakan</a>
-                <a href="#tentang">Tentang Kami</a>
-
-                <a class="button" href="{{ url('/admin/login') }}">
-                    Masuk Pengurus
-                </a>
-            </nav>
+            <a class="header-link" href="{{ route('catalog.index') }}">
+                Lihat Pakan
+            </a>
         </div>
     </header>
 
-    <main>
-        <div class="hero">
-            <div class="container">
-                <p class="eyebrow">Pakan Fermentasi Desa Jarak</p>
+    <main class="container">
 
-                <h1>Kenali pakannya, cek harga dan ketersediaannya.</h1>
+        <section class="hero" aria-labelledby="hero-title">
+            <div>
+                <p class="eyebrow">PAKAN FERMENTASI DESA JARAK</p>
 
-                <p>
+                <h1 id="hero-title">
+                    Kenali pakannya,<br>
+                    cek ketersediaannya.
+                </h1>
+
+                <p class="hero-description">
                     Temukan informasi pakan fermentasi yang dikelola
-                    BUMDes Desa Jarak. Lihat pilihan kemasan,
-                    deskripsi, dan harga sebelum membeli.
+                    BUMDes Desa Jarak. Lihat pilihan kemasan, harga,
+                    dan stok sebelum membeli.
                 </p>
 
-                <a class="button" href="#produk">
-                    Lihat Produk Pakan
-                </a>
-            </div>
-        </div>
+                <div class="buttons">
+                    <a
+                        class="button button-primary"
+                        href="{{ route('catalog.index') }}"
+                    >
+                        Lihat Pakan
+                    </a>
 
-        <section id="produk" class="container">
-            <h2>Pilihan Produk Pakan</h2>
-
-            <p class="muted">
-                Harga tercantum untuk setiap kemasan.
-                Ketersediaan mengikuti catatan stok BUMDes.
-            </p>
-
-            @forelse ($products as $product)
-                @if ($loop->first)
-                    <div class="product-grid">
-                @endif
-
-                @php
-                    $stock = (int) ($product->active_receipts_sum_quantity ?? 0)
-                        - (int) ($product->active_issues_sum_quantity ?? 0)
-                        - (int) ($product->active_sales_sum_quantity ?? 0);
-                @endphp
-
-                <article class="product-card">
-                    @if ($product->image)
-                        <img
-                            class="product-image"
-                            src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($product->image) }}"
-                            alt="Foto {{ $product->name }}"
-                            loading="lazy"
-                            width="600"
-                            height="400"
-                        >
-                    @else
-                        <div class="image-placeholder">
-                            Foto pakan belum tersedia
-                        </div>
-                    @endif
-
-                    <div class="product-content">
-                        <h3>{{ $product->name }}</h3>
-
-                        <p class="muted">
-                            Berat kemasan:
-                            {{ number_format((float) $product->weight_kg, 2, ',', '.') }}
-                            kg
-                        </p>
-
-                        <p class="price">
-                            Rp {{ number_format((float) $product->price, 0, ',', '.') }}
-                            <small>/ kemasan</small>
-                        </p>
-
-                        @if ($stock > 0)
-                            <span class="stock">
-                                Tersedia:
-                                {{ number_format($stock, 0, ',', '.') }}
-                                kemasan
-                            </span>
-                        @else
-                            <span class="stock empty">
-                                Stok belum tersedia
-                            </span>
-                        @endif
-
-                        <p class="description">{{ $product->description ?: 'Informasi produk akan dilengkapi oleh pengurus BUMDes.' }}</p>
-                    </div>
-                </article>
-
-                @if ($loop->last)
-                    </div>
-                @endif
-            @empty
-                <div class="notice">
-                    Produk pakan belum tersedia di halaman ini.
-                    Silakan hubungi pengurus BUMDes untuk informasi lebih lanjut.
+                    <a
+                        class="button button-secondary"
+                        href="#panduan"
+                    >
+                        Panduan Pembelian
+                    </a>
                 </div>
-            @endforelse
+            </div>
+
+            <figure class="hero-visual">
+                @if ($featuredProduct)
+                    <img
+                        src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($featuredProduct->image) }}"
+                        alt="{{ $featuredProduct->name }}"
+                        fetchpriority="high"
+                    >
+
+                    <figcaption>
+                        {{ $featuredProduct->name }} — BUMDes Desa Jarak
+                    </figcaption>
+                @else
+                    <div class="photo-placeholder">
+                        <div>
+                            <strong>JarakFeed</strong>
+                            <span>Pakan fermentasi BUMDes Desa Jarak</span>
+                        </div>
+                    </div>
+                @endif
+            </figure>
         </section>
 
-        <section id="tentang" class="about">
-            <div class="container">
-                <h2>Tentang Pakan Desa Jarak</h2>
+        <section
+            class="section"
+            id="panduan"
+            aria-labelledby="guide-title"
+        >
+            <div class="section-heading">
+                <h2 id="guide-title">Mau membeli pakan?</h2>
+                <p>Ikuti langkah sederhana berikut.</p>
+            </div>
 
-                <p>
-                    Pengembangan pakan fermentasi di Desa Jarak melibatkan
-                    tim produksi, pengurus BUMDes, dan masyarakat.
-                    BUMDes mengelola penerimaan pakan yang sudah diproduksi,
-                    persediaan, serta penjualannya.
-                </p>
+            <ol class="steps">
+                <li class="step">
+                    <span class="step-number" aria-hidden="true">1</span>
+                    <h3>Pilih Pakan</h3>
+                    <p>
+                        Buka katalog dan lihat produk, ukuran kemasan,
+                        harga, serta ketersediaannya.
+                    </p>
+                </li>
 
-                <p>
-                    Website ini membantu masyarakat melihat informasi
-                    produk dan membantu pengurus mencatat kegiatan usaha.
-                    Untuk informasi pembelian dan penggunaan pakan,
-                    silakan hubungi pengurus BUMDes Desa Jarak.
-                </p>
+                <li class="step">
+                    <span class="step-number" aria-hidden="true">2</span>
+                    <h3>Konfirmasi ke Pengurus</h3>
+                    <p>
+                        Tanyakan jumlah yang dibutuhkan, ketersediaan
+                        terbaru, dan cara pembayaran kepada pengurus BUMDes.
+                    </p>
+                </li>
+
+                <li class="step">
+                    <span class="step-number" aria-hidden="true">3</span>
+                    <h3>Ambil di BUMDes</h3>
+                    <p>
+                        Ambil pakan sesuai waktu dan lokasi yang
+                        sudah disepakati dengan pengurus.
+                    </p>
+                </li>
+            </ol>
+        </section>
+
+        <section class="section" aria-labelledby="help-title">
+            <div class="help">
+                <div>
+                    <h2 id="help-title">Masih bingung memilih pakan?</h2>
+                    <p>
+                        Lihat komposisi, cara penggunaan, dan cara penyimpanan
+                        pada detail produk. Untuk informasi lebih lanjut,
+                        tanyakan kepada pengurus BUMDes Desa Jarak.
+                    </p>
+                </div>
+
+                <a
+                    class="button button-primary"
+                    href="{{ route('catalog.index') }}"
+                >
+                    Buka Katalog
+                </a>
             </div>
         </section>
     </main>
 
-    <footer>
-        <div class="container">
-            <p>&copy; {{ date('Y') }} BUMDes Desa Jarak.</p>
-            <p>Desa Jarak, Kecamatan Plosoklaten, Kabupaten Kediri.</p>
+    <footer class="footer">
+        <div class="container footer-content">
+            <p>JarakFeed · BUMDes Desa Jarak</p>
+
+            <p>
+                Desa Jarak, Kecamatan Plosoklaten, Kabupaten Kediri
+            </p>
+
+            <a href="{{ url('/admin/login') }}">
+                Masuk Pengurus
+            </a>
         </div>
     </footer>
 </body>
