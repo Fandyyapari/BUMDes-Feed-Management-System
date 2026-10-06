@@ -22,7 +22,11 @@ class FeedCancellationService
         // Periksa izin akun dari database.
         $user = $actor->fresh();
 
-        if (! $user || ! $user->can_cancel_stock) {
+        if (
+            ! $user
+            || ! in_array($user->role, ['admin', 'petugas'], true)
+            || ! $user->can_cancel_stock
+        ) {
             throw new AuthorizationException(
                 'Akun ini tidak memiliki izin membatalkan transaksi stok.'
             );
