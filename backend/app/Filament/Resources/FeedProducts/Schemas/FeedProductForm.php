@@ -66,6 +66,27 @@ class FeedProductForm
                     ->helperText('Isi informasi produk sesuai panduan tim produksi.')
                     ->columnSpanFull(),
 
+                Textarea::make('composition')
+                    ->label('Komposisi Pakan')
+                    ->helperText('Isi sesuai informasi dari tim produksi.')
+                    ->rows(4)
+                    ->maxLength(5000)
+                    ->columnSpanFull(),
+
+                Textarea::make('usage_instructions')
+                    ->label('Cara Penggunaan')
+                    ->helperText('Isi sesuai panduan penggunaan dari tim produksi.')
+                    ->rows(4)
+                    ->maxLength(5000)
+                    ->columnSpanFull(),
+
+                Textarea::make('storage_instructions')
+                    ->label('Cara Penyimpanan')
+                    ->helperText('Isi sesuai panduan penyimpanan dari tim produksi.')
+                    ->rows(4)
+                    ->maxLength(5000)
+                    ->columnSpanFull(),
+
                 Toggle::make('is_active')
                     ->label('Produk Aktif')
                     ->default(false)
