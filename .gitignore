@@ -6,7 +6,3 @@ __pycache__/
 .ipynb_checkpoints/
 dataset/
 models/
-
-# Sertakan model Laravel
-!/backend/app/Models/
-!/backend/app/Models/**
