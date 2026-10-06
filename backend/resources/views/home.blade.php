@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -348,7 +349,130 @@
                 flex-direction: column;
             }
         }
+
+        .header-content {
+            flex-wrap: wrap;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header-actions form {
+            margin: 0;
+        }
+
+        .account-name {
+            max-width: 220px;
+            overflow-wrap: anywhere;
+            font-size: 14px;
+        }
+
+        .account-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 10px 16px;
+            border: 1px solid var(--green);
+            border-radius: 10px;
+            background: var(--green);
+            color: #fff;
+            font: inherit;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .account-button:hover {
+            background: var(--green-dark);
+        }
+
+        .account-button:focus-visible {
+            outline: 3px solid #bd891f;
+            outline-offset: 3px;
+        }
+
+        @media (max-width: 760px) {
+            .header-actions {
+                width: 100%;
+                justify-content: flex-start;
+                gap: 12px;
+            }
+
+            .account-name {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .header-content {
+                position: relative;
+                gap: 14px;
+                padding: 14px 0;
+            }
+
+            .brand {
+                min-width: 0;
+                padding-right: 90px;
+                gap: 8px;
+            }
+
+            .brand strong {
+                font-size: 21px;
+            }
+
+            .brand small {
+                font-size: 11px;
+            }
+
+            .brand-icon {
+                width: 38px;
+                height: 38px;
+                flex-shrink: 0;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+                gap: 10px;
+                padding-top: 10px;
+                border-top: 1px solid var(--border);
+            }
+
+            .header-actions form {
+                position: absolute;
+                top: 18px;
+                right: 0;
+            }
+
+            .header-actions>.account-button {
+                padding: 10px 14px;
+            }
+
+            .header-actions form .account-button {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+
+            .account-name {
+                flex: 1;
+                min-width: 0;
+                text-align: right;
+                font-size: 13px;
+            }
+
+            .header-link {
+                padding: 0;
+                font-size: 14px;
+            }
+        }
     </style>
+
 </head>
 
 <body>
@@ -357,17 +481,10 @@
             <a class="brand" href="{{ route('home') }}" aria-label="Beranda JarakFeed">
                 <span class="brand-icon" aria-hidden="true">
                     <svg viewBox="0 0 32 32" fill="none">
-                        <path
-                            d="M26 5C14 4 6 9 6 17a9 9 0 0 0 9 9c8 0 12-9 11-21Z"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        />
-                        <path
-                            d="M6 27 21 12M12 21v-7M17 16h7"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                        />
+                        <path d="M26 5C14 4 6 9 6 17a9 9 0 0 0 9 9c8 0 12-9 11-21Z" stroke="currentColor"
+                            stroke-width="2" />
+                        <path d="M6 27 21 12M12 21v-7M17 16h7" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" />
                     </svg>
                 </span>
 
@@ -377,9 +494,34 @@
                 </span>
             </a>
 
-            <a class="header-link" href="{{ route('catalog.index') }}">
-                Lihat Pakan
-            </a>
+            <nav class="header-actions" aria-label="Menu utama">
+                <a class="header-link" href="{{ route('catalog.index') }}">
+                    Lihat Pakan
+                </a>
+
+                @auth
+                    @if (auth()->user()->role === 'pelanggan')
+                        <a class="account-name" href="{{ route('customer.profile.edit') }}">
+                            Profil Saya
+                        </a>
+                    @else
+                        <span class="account-name">
+                            Halo, <strong>{{ auth()->user()->name }}</strong>
+                        </span>
+                    @endif
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button class="account-button" type="submit">
+                            Keluar
+                        </button>
+                    </form>
+                @else
+                    <a class="account-button" href="{{ route('login') }}">
+                        Masuk / Daftar
+                    </a>
+                @endauth
+            </nav>
         </div>
     </header>
 
@@ -401,17 +543,11 @@
                 </p>
 
                 <div class="buttons">
-                    <a
-                        class="button button-primary"
-                        href="{{ route('catalog.index') }}"
-                    >
+                    <a class="button button-primary" href="{{ route('catalog.index') }}">
                         Lihat Pakan
                     </a>
 
-                    <a
-                        class="button button-secondary"
-                        href="#panduan"
-                    >
+                    <a class="button button-secondary" href="#panduan">
                         Panduan Pembelian
                     </a>
                 </div>
@@ -419,11 +555,8 @@
 
             <figure class="hero-visual">
                 @if ($featuredProduct)
-                    <img
-                        src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($featuredProduct->image) }}"
-                        alt="{{ $featuredProduct->name }}"
-                        fetchpriority="high"
-                    >
+                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($featuredProduct->image) }}"
+                        alt="{{ $featuredProduct->name }}" fetchpriority="high">
 
                     <figcaption>
                         {{ $featuredProduct->name }} — BUMDes Desa Jarak
@@ -439,11 +572,7 @@
             </figure>
         </section>
 
-        <section
-            class="section"
-            id="panduan"
-            aria-labelledby="guide-title"
-        >
+        <section class="section" id="panduan" aria-labelledby="guide-title">
             <div class="section-heading">
                 <h2 id="guide-title">Mau membeli pakan?</h2>
                 <p>Ikuti langkah sederhana berikut.</p>
@@ -490,10 +619,7 @@
                     </p>
                 </div>
 
-                <a
-                    class="button button-primary"
-                    href="{{ route('catalog.index') }}"
-                >
+                <a class="button button-primary" href="{{ route('catalog.index') }}">
                     Buka Katalog
                 </a>
             </div>
@@ -514,4 +640,5 @@
         </div>
     </footer>
 </body>
+
 </html>
