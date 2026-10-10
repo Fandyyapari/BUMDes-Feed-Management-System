@@ -196,6 +196,42 @@
                 padding: 22px;
             }
         }
+
+        .order-actions {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .order-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 12px 20px;
+            border-radius: 10px;
+            background: #075734;
+            color: #fff;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .order-button:hover {
+            background: #043d24;
+        }
+
+        .order-button:focus-visible {
+            outline: 3px solid #bd891f;
+            outline-offset: 3px;
+        }
+
+        @media (max-width: 480px) {
+            .order-button {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 
@@ -256,6 +292,28 @@
                 @else
                     <span class="stock empty">Stok habis</span>
                 @endif
+
+                <div class="order-actions">
+                    @auth
+                        @if (auth()->user()->role === 'pelanggan')
+                            <a class="order-button"
+                                href="{{ route('customer.orders.create', ['feedProduct' => $product->id]) }}">
+                                Pesan Pakan
+                            </a>
+
+                            <a href="{{ route('customer.orders.index') }}">
+                                Pesanan Saya
+                            </a>
+                        @else
+                            <p>Gunakan akun pelanggan untuk memesan pakan.</p>
+                        @endif
+                    @else
+                        <a class="order-button"
+                            href="{{ route('customer.orders.create', ['feedProduct' => $product->id]) }}">
+                            Masuk untuk Memesan
+                        </a>
+                    @endauth
+                </div>
 
                 <h2>Tentang Pakan</h2>
 
