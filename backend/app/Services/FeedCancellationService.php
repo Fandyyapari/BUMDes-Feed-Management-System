@@ -3,10 +3,11 @@
 namespace App\Services;
 
 use App\Models\FeedIssue;
+use App\Models\FeedOrder;
 use App\Models\FeedProduct;
 use App\Models\FeedReceipt;
-use App\Models\User;
 use App\Models\FeedSale;
+use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -19,7 +20,6 @@ class FeedCancellationService
         string $reason,
         User $actor
     ): FeedReceipt|FeedIssue|FeedSale {
-        // Periksa izin akun dari database.
         $user = $actor->fresh();
 
         if (
@@ -32,7 +32,6 @@ class FeedCancellationService
             );
         }
 
-        // Alasan harus diisi dan tidak boleh hanya berupa spasi.
         $validated = Validator::make(
             ['cancellation_reason' => trim($reason)],
             [
@@ -44,13 +43,15 @@ class FeedCancellationService
                 ],
             ],
             [
-                'cancellation_reason.required' => 'Alasan pembatalan wajib diisi.',
-                'cancellation_reason.min' => 'Alasan minimal 5 karakter.',
-                'cancellation_reason.max' => 'Alasan maksimal 1000 karakter.',
+                'cancellation_reason.required' =>
+                'Alasan pembatalan wajib diisi.',
+                'cancellation_reason.min' =>
+                'Alasan minimal 5 karakter.',
+                'cancellation_reason.max' =>
+                'Alasan maksimal 1000 karakter.',
             ]
         )->validate();
 
-        // Ambil transaksi asli dari database.
         $original = $record->newQuery()
             ->findOrFail($record->getKey());
 
@@ -59,12 +60,23 @@ class FeedCancellationService
             $validated,
             $user
         ) {
-            // Kunci produk terlebih dahulu, seperti proses Pakan Keluar.
+            // Kunci produk terlebih dahulu.
             $product = FeedProduct::query()
                 ->lockForUpdate()
                 ->findOrFail($original->feed_product_id);
 
-            // Ambil ulang dan kunci transaksi yang akan dibatalkan.
+            // Jika penjualan berasal dari pesanan, kunci pesanannya.
+            // Urutannya sama dengan proses penyelesaian pesanan:
+            // produk, pesanan, lalu penjualan.
+            $order = null;
+
+            if ($original instanceof FeedSale) {
+                $order = FeedOrder::query()
+                    ->where('feed_sale_id', $original->getKey())
+                    ->lockForUpdate()
+                    ->first();
+            }
+
             $transaction = $original->newQuery()
                 ->lockForUpdate()
                 ->findOrFail($original->getKey());
@@ -86,7 +98,23 @@ class FeedCancellationService
                 ]);
             }
 
-            // Membatalkan Pakan Masuk akan mengurangi stok.
+            // Periksa kesesuaian pesanan dan penjualan.
+            if ($order !== null) {
+                if (
+                    (int) $order->feed_product_id !== (int) $product->id
+                    || (int) $order->feed_sale_id
+                    !== (int) $transaction->getKey()
+                    || $order->status !== FeedOrder::STATUS_COMPLETED
+                ) {
+                    throw ValidationException::withMessages([
+                        'cancellation_reason' =>
+                        'Data pesanan tidak sesuai dengan penjualan. '
+                            . 'Periksa pesanan sebelum membatalkan.',
+                    ]);
+                }
+            }
+
+            // Pembatalan pakan masuk tidak boleh membuat stok negatif.
             if ($transaction instanceof FeedReceipt) {
                 $stock = $product->availableStock();
                 $quantity = (int) $transaction->quantity;
@@ -100,14 +128,25 @@ class FeedCancellationService
                 }
             }
 
-            // Simpan pembatalan tanpa menghapus transaksi.
-            $transaction->cancelled_at = now();
+            $cancelledAt = now();
+
+            // Simpan riwayat pembatalan transaksi.
+            $transaction->cancelled_at = $cancelledAt;
             $transaction->cancellation_reason =
                 $validated['cancellation_reason'];
             $transaction->cancelled_by = $user->id;
             $transaction->save();
 
+            // Perbarui pesanan yang terhubung dengan penjualan.
+            if ($order !== null) {
+                $order->status = FeedOrder::STATUS_CANCELLED;
+                $order->cancelled_at = $cancelledAt;
+                $order->cancellation_reason =
+                    $validated['cancellation_reason'];
+                $order->save();
+            }
+
             return $transaction;
-        });
+        }, 3);
     }
 }
