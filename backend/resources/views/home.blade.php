@@ -501,6 +501,10 @@
 
                 @auth
                     @if (auth()->user()->role === 'pelanggan')
+                        <a class="header-link" href="{{ route('customer.orders.index') }}">
+                            Pesanan Saya
+                        </a>
+
                         <a class="account-name" href="{{ route('customer.profile.edit') }}">
                             Profil Saya
                         </a>

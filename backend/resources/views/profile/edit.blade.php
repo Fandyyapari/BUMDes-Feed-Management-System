@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -243,6 +244,32 @@
                 width: 100%;
             }
         }
+
+        .profile-navigation {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+        }
+
+        .profile-navigation a {
+            display: inline-flex;
+            align-items: center;
+            min-height: 44px;
+        }
+
+        @media (max-width: 600px) {
+            .header-content {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .profile-navigation {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
     </style>
 </head>
 
@@ -251,9 +278,19 @@
         <div class="header-content">
             <a class="brand" href="{{ route('home') }}">JarakFeed</a>
 
-            <a class="back-link" href="{{ route('home') }}">
-                Kembali ke Beranda
-            </a>
+            <nav class="profile-navigation" aria-label="Menu utama">
+                <a class="back-link" href="{{ route('home') }}">
+                    Kembali ke Beranda
+                </a>
+
+                @auth
+                    @if (auth()->user()->role === 'pelanggan')
+                        <a class="back-link" href="{{ route('customer.orders.index') }}">
+                            Pesanan Saya
+                        </a>
+                    @endif
+                @endauth
+            </nav>
         </div>
     </header>
 
@@ -301,17 +338,10 @@
                 <div class="field">
                     <label for="name">Nama Lengkap</label>
 
-                    <input
-                        id="name"
-                        name="name"
-                        type="text"
-                        value="{{ old('name', $user->name) }}"
-                        autocomplete="name"
-                        maxlength="255"
-                        required
+                    <input id="name" name="name" type="text" value="{{ old('name', $user->name) }}"
+                        autocomplete="name" maxlength="255" required
                         aria-invalid="{{ $errors->has('name') ? 'true' : 'false' }}"
-                        @error('name') aria-describedby="name-error" @enderror
-                    >
+                        @error('name') aria-describedby="name-error" @enderror>
 
                     @error('name')
                         <p class="error" id="name-error">{{ $message }}</p>
@@ -323,16 +353,10 @@
                         Dusun <span class="optional">(boleh dikosongkan)</span>
                     </label>
 
-                    <input
-                        id="dusun"
-                        name="dusun"
-                        type="text"
-                        value="{{ old('dusun', $user->dusun) }}"
-                        maxlength="100"
-                        placeholder="Nama dusun tempat tinggal"
+                    <input id="dusun" name="dusun" type="text" value="{{ old('dusun', $user->dusun) }}"
+                        maxlength="100" placeholder="Nama dusun tempat tinggal"
                         aria-invalid="{{ $errors->has('dusun') ? 'true' : 'false' }}"
-                        @error('dusun') aria-describedby="dusun-error" @enderror
-                    >
+                        @error('dusun') aria-describedby="dusun-error" @enderror>
 
                     @error('dusun')
                         <p class="error" id="dusun-error">{{ $message }}</p>
@@ -345,15 +369,9 @@
                         <span class="optional">(boleh dikosongkan)</span>
                     </label>
 
-                    <textarea
-                        id="address"
-                        name="address"
-                        autocomplete="street-address"
-                        maxlength="1000"
-                        placeholder="Contoh: RT 02/RW 01, Desa Jarak"
-                        aria-invalid="{{ $errors->has('address') ? 'true' : 'false' }}"
-                        aria-describedby="address-hint{{ $errors->has('address') ? ' address-error' : '' }}"
-                    >{{ old('address', $user->address) }}</textarea>
+                    <textarea id="address" name="address" autocomplete="street-address" maxlength="1000"
+                        placeholder="Contoh: RT 02/RW 01, Desa Jarak" aria-invalid="{{ $errors->has('address') ? 'true' : 'false' }}"
+                        aria-describedby="address-hint{{ $errors->has('address') ? ' address-error' : '' }}">{{ old('address', $user->address) }}</textarea>
 
                     <p class="hint" id="address-hint">
                         Isi RT/RW dan keterangan alamat yang mudah dikenali.
@@ -379,4 +397,5 @@
 
     <footer>BUMDes Desa Jarak · JarakFeed</footer>
 </body>
+
 </html>

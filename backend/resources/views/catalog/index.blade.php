@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -277,6 +278,32 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .catalog-navigation {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+        }
+
+        .catalog-navigation a {
+            display: inline-flex;
+            align-items: center;
+            min-height: 44px;
+        }
+
+        @media (max-width: 600px) {
+            .header-content {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .catalog-navigation {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
     </style>
 </head>
 
@@ -288,9 +315,27 @@
                 <small>BUMDes Desa Jarak</small>
             </a>
 
-            <a class="back-link" href="{{ route('home') }}">
-                Beranda
-            </a>
+            <nav class="catalog-navigation" aria-label="Menu utama">
+                <a class="back-link" href="{{ route('home') }}">
+                    Beranda
+                </a>
+
+                @auth
+                    @if (auth()->user()->role === 'pelanggan')
+                        <a class="back-link" href="{{ route('customer.orders.index') }}">
+                            Pesanan Saya
+                        </a>
+
+                        <a class="back-link" href="{{ route('customer.profile.edit') }}">
+                            Profil Saya
+                        </a>
+                    @endif
+                @else
+                    <a class="back-link" href="{{ route('login') }}">
+                        Masuk / Daftar
+                    </a>
+                @endauth
+            </nav>
         </div>
     </header>
 
@@ -301,23 +346,12 @@
             Lihat produk dan ketersediaan pakan di BUMDes Desa Jarak.
         </p>
 
-        <form
-            class="search-form"
-            action="{{ route('catalog.index') }}"
-            method="GET"
-            role="search"
-        >
+        <form class="search-form" action="{{ route('catalog.index') }}" method="GET" role="search">
             <div class="search-field">
                 <label for="search">Cari pakan</label>
 
-                <input
-                    id="search"
-                    type="search"
-                    name="q"
-                    value="{{ $search }}"
-                    placeholder="Ketik nama pakan"
-                    maxlength="100"
-                >
+                <input id="search" type="search" name="q" value="{{ $search }}"
+                    placeholder="Ketik nama pakan" maxlength="100">
             </div>
 
             <button class="button search-button" type="submit">
@@ -358,21 +392,17 @@
             <div class="product-grid">
                 @foreach ($products as $product)
                     @php
-                        $stock = (int) ($product->active_receipts_sum_quantity ?? 0)
-                            - (int) ($product->active_issues_sum_quantity ?? 0)
-                            - (int) ($product->active_sales_sum_quantity ?? 0);
+                        $stock =
+                            (int) ($product->active_receipts_sum_quantity ?? 0) -
+                            (int) ($product->active_issues_sum_quantity ?? 0) -
+                            (int) ($product->active_sales_sum_quantity ?? 0);
                     @endphp
 
                     <article class="product-card">
                         @if ($product->image)
-                            <img
-                                class="product-image"
+                            <img class="product-image"
                                 src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($product->image) }}"
-                                alt="Foto {{ $product->name }}"
-                                loading="lazy"
-                                width="600"
-                                height="450"
-                            >
+                                alt="Foto {{ $product->name }}" loading="lazy" width="600" height="450">
                         @else
                             <div class="image-placeholder">
                                 Foto pakan belum tersedia
@@ -398,11 +428,8 @@
                                 <p class="stock empty">● Stok habis</p>
                             @endif
 
-                            <a
-                                class="button"
-                                href="{{ route('catalog.show', $product) }}"
-                                aria-label="Lihat detail {{ $product->name }}"
-                            >
+                            <a class="button" href="{{ route('catalog.show', $product) }}"
+                                aria-label="Lihat detail {{ $product->name }}">
                                 Lihat Detail
                             </a>
                         </div>
@@ -439,4 +466,5 @@
         </div>
     </footer>
 </body>
+
 </html>

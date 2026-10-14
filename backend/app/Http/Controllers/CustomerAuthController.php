@@ -74,7 +74,7 @@ class CustomerAuthController extends Controller
         Auth::guard('web')->login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('home')
+        return redirect()->intended(route('home'))
             ->with('success', 'Akun berhasil dibuat. Selamat datang!');
     }
 
@@ -115,7 +115,7 @@ class CustomerAuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->route('home')
+        return redirect()->intended(route('home'))
             ->with('success', 'Berhasil masuk.');
     }
 

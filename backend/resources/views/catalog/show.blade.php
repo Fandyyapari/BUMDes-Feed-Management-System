@@ -232,6 +232,32 @@
                 width: 100%;
             }
         }
+
+        .product-navigation {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+        }
+
+        .product-navigation a {
+            display: inline-flex;
+            align-items: center;
+            min-height: 44px;
+        }
+
+        @media (max-width: 600px) {
+            .header-content {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .product-navigation {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
     </style>
 </head>
 
@@ -245,13 +271,31 @@
 
     <header>
         <div class="container header-content">
-            <a href="{{ route('catalog.index') }}">
-                ← Kembali ke Katalog
-            </a>
-
             <a class="brand" href="{{ route('home') }}">
                 JarakFeed
             </a>
+
+            <nav class="product-navigation" aria-label="Menu utama">
+                <a href="{{ route('catalog.index') }}">
+                    ← Kembali ke Katalog
+                </a>
+
+                @auth
+                    @if (auth()->user()->role === 'pelanggan')
+                        <a href="{{ route('customer.orders.index') }}">
+                            Pesanan Saya
+                        </a>
+
+                        <a href="{{ route('customer.profile.edit') }}">
+                            Profil Saya
+                        </a>
+                    @endif
+                @else
+                    <a href="{{ route('login') }}">
+                        Masuk / Daftar
+                    </a>
+                @endauth
+            </nav>
         </div>
     </header>
 
