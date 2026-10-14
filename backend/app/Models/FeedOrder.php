@@ -65,4 +65,9 @@ class FeedOrder extends Model
         return self::statusOptions()[$this->status]
             ?? 'Status Tidak Dikenali';
     }
+
+    public function cancelledBy(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'cancelled_by');
+    }
 }
