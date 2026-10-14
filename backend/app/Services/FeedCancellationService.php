@@ -143,6 +143,7 @@ class FeedCancellationService
                 $order->cancelled_at = $cancelledAt;
                 $order->cancellation_reason =
                     $validated['cancellation_reason'];
+                $order->cancelled_by = $user->id;
                 $order->save();
             }
 

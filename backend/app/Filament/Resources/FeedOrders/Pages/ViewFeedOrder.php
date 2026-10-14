@@ -21,6 +21,85 @@ class ViewFeedOrder extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+
+            Action::make('cancelOrder')
+                ->label('Batalkan Pesanan')
+                ->color('danger')
+                ->authorize(
+                    fn(): bool => FeedOrderResource::canViewAny()
+                )
+                ->visible(function (): bool {
+                    $order = $this->getRecord();
+
+                    return in_array(
+                        $order->status,
+                        [
+                            FeedOrder::STATUS_WAITING,
+                            FeedOrder::STATUS_CONFIRMED,
+                        ],
+                        true
+                    )
+                        && $order->feed_sale_id === null
+                        && $order->completed_at === null
+                        && $order->cancelled_at === null;
+                })
+                ->modalHeading('Batalkan Pesanan')
+                ->modalDescription(
+                    'Alasan pembatalan akan terlihat oleh pelanggan. '
+                        . 'Pembatalan pesanan ini tidak mengubah stok.'
+                )
+                ->modalSubmitActionLabel('Batalkan Pesanan')
+                ->modalCancelActionLabel('Kembali')
+                ->schema([
+                    Textarea::make('cancellation_reason')
+                        ->label('Alasan Pembatalan')
+                        ->placeholder(
+                            'Contoh: Pelanggan menghubungi pengurus '
+                                . 'dan membatalkan pengambilan pakan.'
+                        )
+                        ->required()
+                        ->minLength(5)
+                        ->maxLength(1000)
+                        ->rows(4),
+                ])
+                ->action(function (array $data, Action $action): void {
+                    $actor = Auth::user();
+
+                    abort_unless($actor instanceof User, 403);
+
+                    try {
+                        app(FeedOrderProcessingService::class)->cancel(
+                            $this->getRecord(),
+                            $data['cancellation_reason'],
+                            $actor
+                        );
+                    } catch (ValidationException $exception) {
+                        Notification::make()
+                            ->title('Pembatalan belum berhasil')
+                            ->body(
+                                collect($exception->errors())
+                                    ->flatten()
+                                    ->implode(' ')
+                            )
+                            ->danger()
+                            ->send();
+
+                        $action->halt();
+
+                        return;
+                    }
+
+                    Notification::make()
+                        ->title('Pesanan berhasil dibatalkan')
+                        ->success()
+                        ->send();
+
+                    $this->redirect(
+                        FeedOrderResource::getUrl('view', [
+                            'record' => $this->getRecord()->getKey(),
+                        ])
+                    );
+                }),
             Action::make('confirmOrder')
                 ->label('Konfirmasi Pesanan')
                 ->color('success')

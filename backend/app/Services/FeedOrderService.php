@@ -215,6 +215,7 @@ class FeedOrderService
             $order->cancelled_at = now();
             $order->cancellation_reason =
                 $validated['cancellation_reason'];
+            $order->cancelled_by = $customer->id;
             $order->save();
 
             return $order;

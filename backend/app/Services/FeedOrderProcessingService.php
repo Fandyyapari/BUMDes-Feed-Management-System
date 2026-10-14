@@ -177,6 +177,82 @@ class FeedOrderProcessingService
             return $order;
         }, 3);
     }
+
+    public function cancel(
+        FeedOrder $record,
+        string $reason,
+        User $actor
+    ): FeedOrder {
+        $user = $actor->fresh();
+
+        if (
+            ! $user
+            || ! in_array($user->role, ['admin', 'petugas'], true)
+        ) {
+            throw new AuthorizationException(
+                'Akun ini tidak boleh membatalkan pesanan.'
+            );
+        }
+
+        $validated = Validator::make(
+            ['cancellation_reason' => trim($reason)],
+            [
+                'cancellation_reason' => [
+                    'required',
+                    'string',
+                    'min:5',
+                    'max:1000',
+                ],
+            ],
+            [
+                'cancellation_reason.required' =>
+                'Alasan pembatalan wajib diisi.',
+                'cancellation_reason.min' =>
+                'Alasan minimal 5 karakter.',
+                'cancellation_reason.max' =>
+                'Alasan maksimal 1.000 karakter.',
+            ]
+        )->validate();
+
+        return DB::transaction(function () use (
+            $record,
+            $validated,
+            $user
+        ) {
+            $order = FeedOrder::query()
+                ->lockForUpdate()
+                ->findOrFail($record->getKey());
+
+            if (
+                ! in_array(
+                    $order->status,
+                    [
+                        FeedOrder::STATUS_WAITING,
+                        FeedOrder::STATUS_CONFIRMED,
+                    ],
+                    true
+                )
+                || $order->feed_sale_id !== null
+                || $order->completed_at !== null
+                || $order->cancelled_at !== null
+            ) {
+                throw ValidationException::withMessages([
+                    'cancellation_reason' =>
+                    'Hanya pesanan menunggu atau dikonfirmasi '
+                        . 'yang belum menjadi penjualan dapat dibatalkan.',
+                ]);
+            }
+
+            $order->status = FeedOrder::STATUS_CANCELLED;
+            $order->cancellation_reason =
+                $validated['cancellation_reason'];
+            $order->cancelled_at = now();
+            $order->cancelled_by = $user->id;
+            $order->save();
+
+            return $order;
+        }, 3);
+    }
     public function complete(
         FeedOrder $record,
         string $paymentMethod,

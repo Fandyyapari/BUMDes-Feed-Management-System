@@ -21,11 +21,11 @@ class FeedOrderInfolist
                     ->label('Status Pesanan')
                     ->badge()
                     ->formatStateUsing(
-                        fn (string $state): string =>
-                            FeedOrder::statusOptions()[$state]
+                        fn(string $state): string =>
+                        FeedOrder::statusOptions()[$state]
                             ?? 'Status Tidak Dikenali'
                     )
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         FeedOrder::STATUS_WAITING => 'warning',
                         FeedOrder::STATUS_CONFIRMED => 'info',
                         FeedOrder::STATUS_COMPLETED => 'success',
@@ -105,6 +105,13 @@ class FeedOrderInfolist
                     ->dateTime('d/m/Y H:i')
                     ->timezone('Asia/Jakarta')
                     ->placeholder('Tidak dibatalkan'),
+
+                TextEntry::make('cancelledBy.name')
+                    ->label('Dibatalkan Oleh')
+                    ->placeholder('Belum tercatat')
+                    ->visible(
+                        fn($record): bool => $record->cancelled_at !== null
+                    ),
 
                 TextEntry::make('cancellation_reason')
                     ->label('Alasan Pembatalan')
