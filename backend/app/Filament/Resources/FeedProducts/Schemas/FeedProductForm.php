@@ -54,9 +54,13 @@ class FeedProductForm
                     ->label('Harga per Kemasan')
                     ->numeric()
                     ->prefix('Rp')
-                    ->minValue(0)
-                    ->maxValue(9999999999.99)
-                    ->step(0.01)
+                    ->minValue(1)
+                    ->maxValue(1000000000)
+                    ->step(1)
+                    ->rules(['regex:/^[0-9]+(?:\.0{1,2})?$/'])
+                    ->helperText(
+                        'Isi rupiah bulat tanpa pemisah ribuan. Contoh: 25000.'
+                    )
                     ->required(),
 
                 Textarea::make('description')

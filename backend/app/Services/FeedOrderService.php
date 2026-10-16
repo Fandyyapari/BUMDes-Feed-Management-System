@@ -110,23 +110,33 @@ class FeedOrderService
             // Hitung uang sebagai bilangan bulat dalam satuan sen.
             $price = (string) $product->price;
 
-            if (! preg_match('/^\d{1,13}(?:\.\d{1,2})?$/', $price)) {
+            // Harga harus berupa rupiah bulat, bukan pecahan.
+            if (! preg_match('/^[1-9][0-9]{0,9}(?:\.0{1,2})?$/D', $price)) {
                 throw ValidationException::withMessages([
                     'feed_product_id' =>
-                    'Harga produk belum valid. Hubungi pengurus.',
+                    'Harga produk belum sesuai. Hubungi pengurus.',
                 ]);
             }
 
-            $parts = explode('.', $price);
-            $unitPriceInCents = ((int) $parts[0] * 100)
-                + (int) str_pad($parts[1] ?? '', 2, '0');
+            $unitPrice = (int) explode('.', $price)[0];
 
-            // Sesuaikan batas total dengan kolom decimal(15, 2).
-            $maximumInCents = 999999999999999;
+            if ($unitPrice > 1000000000) {
+                throw ValidationException::withMessages([
+                    'feed_product_id' =>
+                    'Harga produk melebihi batas yang diizinkan. Hubungi pengurus.',
+                ]);
+            }
+
+            // Tetap gunakan satuan sen agar sesuai perhitungan sebelumnya.
+            $unitPriceInCents = $unitPrice * 100;
+
+            // Samakan batas total dengan service penjualan.
+            $maximumInCents = 999999999999900;
 
             if ($unitPriceInCents > intdiv($maximumInCents, $quantity)) {
                 throw ValidationException::withMessages([
-                    'quantity' => 'Total pesanan terlalu besar.',
+                    'quantity' =>
+                    'Total pesanan terlalu besar. Kurangi jumlah pesanan.',
                 ]);
             }
 
