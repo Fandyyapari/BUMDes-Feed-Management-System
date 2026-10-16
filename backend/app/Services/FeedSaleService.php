@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Auth\Access\AuthorizationException;
 
 class FeedSaleService
 {
@@ -16,10 +17,13 @@ class FeedSaleService
     {
         $actor = $actor->fresh();
 
-        if (! $actor) {
-            throw ValidationException::withMessages([
-                'customer_name' => 'Akun pencatat tidak ditemukan.',
-            ]);
+        if (
+            ! $actor
+            || ! in_array($actor->role, ['admin', 'petugas'], true)
+        ) {
+            throw new AuthorizationException(
+                'Hanya admin atau petugas yang boleh mencatat penjualan.'
+            );
         }
 
         $data['customer_name'] = trim(
@@ -69,7 +73,7 @@ class FeedSaleService
             if ($quantity > $stock) {
                 throw ValidationException::withMessages([
                     'quantity' =>
-                        "Stok hanya tersedia {$stock} kemasan.",
+                    "Stok hanya tersedia {$stock} kemasan.",
                 ]);
             }
 
@@ -78,7 +82,7 @@ class FeedSaleService
             if ($totalPrice > 9999999999999) {
                 throw ValidationException::withMessages([
                     'unit_price' =>
-                        'Total penjualan melebihi batas penyimpanan.',
+                    'Total penjualan melebihi batas penyimpanan.',
                 ]);
             }
 
