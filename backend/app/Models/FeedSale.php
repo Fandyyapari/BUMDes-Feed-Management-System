@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class FeedSale extends Model
 {
@@ -43,6 +44,11 @@ class FeedSale extends Model
     public function cancelledBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'cancelled_by');
+    }
+
+    public function feedOrder(): HasOne
+    {
+        return $this->hasOne(FeedOrder::class, 'feed_sale_id');
     }
 
     public function isCancelled(): bool

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\FeedOrders\Schemas;
 use App\Models\FeedOrder;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
+use App\Filament\Resources\FeedSales\FeedSaleResource;
 
 class FeedOrderInfolist
 {
@@ -15,6 +16,23 @@ class FeedOrderInfolist
             ->components([
                 TextEntry::make('order_number')
                     ->label('Nomor Pesanan')
+                    ->columnSpanFull(),
+
+                TextEntry::make('feedSale.sale_number')
+                    ->label('Penjualan Terkait')
+                    ->placeholder('Belum menjadi penjualan')
+                    ->color('primary')
+                    ->url(function (FeedOrder $record): ?string {
+                        $sale = $record->feedSale;
+
+                        if (! $sale || ! FeedSaleResource::canView($sale)) {
+                            return null;
+                        }
+
+                        return FeedSaleResource::getUrl('view', [
+                            'record' => $sale->getKey(),
+                        ]);
+                    })
                     ->columnSpanFull(),
 
                 TextEntry::make('status')

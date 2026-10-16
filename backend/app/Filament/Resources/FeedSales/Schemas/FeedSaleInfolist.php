@@ -5,6 +5,7 @@ namespace App\Filament\Resources\FeedSales\Schemas;
 use App\Models\FeedSale;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
+use App\Filament\Resources\FeedOrders\FeedOrderResource;
 
 class FeedSaleInfolist
 {
@@ -13,6 +14,22 @@ class FeedSaleInfolist
         return $schema->components([
             TextEntry::make('sale_number')
                 ->label('Nomor Penjualan'),
+
+            TextEntry::make('feedOrder.order_number')
+                ->label('Pesanan Asal')
+                ->placeholder('Tidak terkait pesanan online')
+                ->color('primary')
+                ->url(function (FeedSale $record): ?string {
+                    $order = $record->feedOrder;
+
+                    if (! $order || ! FeedOrderResource::canView($order)) {
+                        return null;
+                    }
+
+                    return FeedOrderResource::getUrl('view', [
+                        'record' => $order->getKey(),
+                    ]);
+                }),
 
             TextEntry::make('sold_at')
                 ->label('Tanggal Penjualan')
@@ -44,7 +61,7 @@ class FeedSaleInfolist
             TextEntry::make('payment_method')
                 ->label('Metode Pembayaran')
                 ->formatStateUsing(
-                    fn (string $state): string => match ($state) {
+                    fn(string $state): string => match ($state) {
                         'tunai' => 'Tunai',
                         'transfer' => 'Transfer Bank',
                         default => $state,
@@ -57,12 +74,12 @@ class FeedSaleInfolist
             TextEntry::make('status')
                 ->label('Status Transaksi')
                 ->state(
-                    fn (FeedSale $record): string =>
+                    fn(FeedSale $record): string =>
                     $record->isCancelled() ? 'Dibatalkan' : 'Aktif'
                 )
                 ->badge()
                 ->color(
-                    fn (string $state): string =>
+                    fn(string $state): string =>
                     $state === 'Dibatalkan' ? 'danger' : 'success'
                 ),
 
@@ -81,20 +98,20 @@ class FeedSaleInfolist
                 ->dateTime('d/m/Y H:i')
                 ->timezone('Asia/Jakarta')
                 ->visible(
-                    fn (FeedSale $record): bool => $record->isCancelled()
+                    fn(FeedSale $record): bool => $record->isCancelled()
                 ),
 
             TextEntry::make('cancelledBy.name')
                 ->label('Dibatalkan Oleh')
                 ->visible(
-                    fn (FeedSale $record): bool => $record->isCancelled()
+                    fn(FeedSale $record): bool => $record->isCancelled()
                 ),
 
             TextEntry::make('cancellation_reason')
                 ->label('Alasan Pembatalan')
                 ->columnSpanFull()
                 ->visible(
-                    fn (FeedSale $record): bool => $record->isCancelled()
+                    fn(FeedSale $record): bool => $record->isCancelled()
                 ),
         ]);
     }
