@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -183,6 +184,7 @@
         }
     </style>
 </head>
+
 <body>
     <main class="container">
         <a class="back-link" href="{{ route('home') }}">
@@ -215,22 +217,12 @@
 
                 <div class="field">
                     <label for="login">Email atau nomor HP</label>
-                    <input
-                        class="text-input"
-                        id="login"
-                        name="login"
-                        type="text"
-                        value="{{ old('login') }}"
-                        autocomplete="username"
-                        autocapitalize="none"
-                        spellcheck="false"
-                        maxlength="255"
-                        required
+                    <input class="text-input" id="login" name="login" type="text" value="{{ old('login') }}"
+                        autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="255" required
                         @error('login')
                             aria-invalid="true"
                             aria-describedby="login-error"
-                        @enderror
-                    >
+                        @enderror>
 
                     @error('login')
                         <p class="error" id="login-error">{{ $message }}</p>
@@ -239,19 +231,12 @@
 
                 <div class="field">
                     <label for="password">Kata sandi</label>
-                    <input
-                        class="text-input"
-                        id="password"
-                        name="password"
-                        type="password"
-                        autocomplete="current-password"
-                        maxlength="72"
-                        required
+                    <input class="text-input" id="password" name="password" type="password"
+                        autocomplete="current-password" maxlength="72" required
                         @error('password')
                             aria-invalid="true"
                             aria-describedby="password-error"
-                        @enderror
-                    >
+                        @enderror>
 
                     @error('password')
                         <p class="error" id="password-error">{{ $message }}</p>
@@ -267,6 +252,13 @@
                     Masuk
                 </button>
             </form>
+
+            <div style="margin-top: 18px; text-align: center;">
+                <a href="{{ route('password.request') }}"
+                    style="color: #245b3b; font-weight: 600; text-decoration: underline;">
+                    Lupa kata sandi?
+                </a>
+            </div>
 
             <p class="register-link">
                 Belum punya akun?
@@ -284,10 +276,11 @@
 
     <script>
         document.getElementById('show-password')
-            .addEventListener('change', function () {
+            .addEventListener('change', function() {
                 document.getElementById('password').type =
                     this.checked ? 'text' : 'password';
             });
     </script>
 </body>
+
 </html>

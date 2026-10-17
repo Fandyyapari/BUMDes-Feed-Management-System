@@ -5,6 +5,7 @@ use App\Http\Controllers\FeedCatalogController;
 use App\Http\Controllers\CustomerProfileController;
 use App\Http\Controllers\CustomerOrderController;
 use App\Http\Controllers\SalesReportExportController;
+use App\Http\Controllers\CustomerPasswordResetController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +35,34 @@ Route::middleware('guest')->group(function () {
     Route::post('/masuk', [CustomerAuthController::class, 'login'])
         ->middleware('throttle:5,1')
         ->name('customer.login.store');
+
+    // Halaman untuk meminta tautan reset.
+    Route::get('/lupa-kata-sandi', [
+        CustomerPasswordResetController::class,
+        'showForgotPassword',
+    ])->name('password.request');
+
+    // Kirim tautan reset melalui email.
+    Route::post('/lupa-kata-sandi', [
+        CustomerPasswordResetController::class,
+        'sendResetLink',
+    ])
+        ->middleware('throttle:3,1')
+        ->name('password.email');
+
+    // Halaman untuk memasukkan kata sandi baru.
+    Route::get('/reset-kata-sandi/{token}', [
+        CustomerPasswordResetController::class,
+        'showResetPassword',
+    ])->name('password.reset');
+
+    // Simpan kata sandi baru.
+    Route::post('/reset-kata-sandi', [
+        CustomerPasswordResetController::class,
+        'resetPassword',
+    ])
+        ->middleware('throttle:5,1')
+        ->name('password.update');
 });
 
 
@@ -45,6 +74,14 @@ Route::middleware('auth')->group(function () {
 
     Route::put('/profil', [CustomerProfileController::class, 'update'])
         ->name('customer.profile.update');
+
+    // Ubah kata sandi pelanggan.
+    Route::put('/profil/kata-sandi', [
+        CustomerProfileController::class,
+        'updatePassword',
+    ])
+        ->middleware('throttle:5,1')
+        ->name('customer.password.update');
 
     // Riwayat pesanan.
     Route::get('/pesanan', [CustomerOrderController::class, 'index'])
