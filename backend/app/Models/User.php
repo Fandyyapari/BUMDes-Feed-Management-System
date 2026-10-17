@@ -8,6 +8,7 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Notifications\CustomerResetPasswordNotification;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -51,5 +52,18 @@ class User extends Authenticatable implements FilamentUser
     {
         return $panel->getId() === 'admin'
             && ($this->isAdmin() || $this->isPetugas());
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        if ($this->role === 'pelanggan') {
+            $this->notify(
+                new CustomerResetPasswordNotification((string) $token)
+            );
+
+            return;
+        }
+
+        parent::sendPasswordResetNotification($token);
     }
 }
