@@ -4,6 +4,7 @@ use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\FeedCatalogController;
 use App\Http\Controllers\CustomerProfileController;
 use App\Http\Controllers\CustomerOrderController;
+use App\Http\Controllers\SalesReportExportController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -87,3 +88,8 @@ Route::middleware('auth')->group(function () {
 Route::post('/keluar', [CustomerAuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
+
+// Unduh laporan penjualan untuk pengurus.
+Route::get('/laporan/penjualan/unduh', SalesReportExportController::class)
+    ->middleware(['auth', 'throttle:10,1'])
+    ->name('reports.sales.export');
