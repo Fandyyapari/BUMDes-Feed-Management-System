@@ -392,6 +392,73 @@
                     </a>
                 </div>
             </form>
+
+            <section aria-labelledby="password-heading"
+                style="margin-top: 24px; padding: 24px; background: #fff; border: 1px solid #dce5dc; border-radius: 16px;">
+                <h2 id="password-heading" style="margin: 0 0 8px; color: #234b35;">
+                    Ubah Kata Sandi
+                </h2>
+
+                <p style="margin-bottom: 20px; color: #526354;">
+                    Masukkan kata sandi lama dan kata sandi baru untuk akunmu.
+                </p>
+
+                <form method="POST" action="{{ route('customer.password.update') }}">
+                    @csrf
+                    @method('PUT')
+
+                    <div style="margin-bottom: 16px;">
+                        <label for="current_password" style="display: block; margin-bottom: 8px;">
+                            Kata Sandi Lama
+                        </label>
+
+                        <input id="current_password" name="current_password" type="password"
+                            autocomplete="current-password" required
+                            style="width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid #87988a; border-radius: 8px;">
+
+                        @error('current_password', 'updatePassword')
+                            <p role="alert" style="color: #b91c1c; margin-top: 6px;">
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label for="password" style="display: block; margin-bottom: 8px;">
+                            Kata Sandi Baru
+                        </label>
+
+                        <input id="password" name="password" type="password" autocomplete="new-password" minlength="8"
+                            maxlength="72" aria-describedby="password-help" required
+                            style="width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid #87988a; border-radius: 8px;">
+
+                        <p id="password-help" style="font-size: 14px; margin-top: 6px;">
+                            Minimal 8 karakter dan berbeda dari kata sandi lama.
+                        </p>
+
+                        @error('password', 'updatePassword')
+                            <p role="alert" style="color: #b91c1c; margin-top: 6px;">
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label for="password_confirmation" style="display: block; margin-bottom: 8px;">
+                            Konfirmasi Kata Sandi Baru
+                        </label>
+
+                        <input id="password_confirmation" name="password_confirmation" type="password"
+                            autocomplete="new-password" minlength="8" maxlength="72" required
+                            style="width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid #87988a; border-radius: 8px;">
+                    </div>
+
+                    <button type="submit"
+                        style="padding: 12px 20px; background: #245b3b; color: #fff; border: none; border-radius: 8px; font: inherit; cursor: pointer;">
+                        Simpan Kata Sandi
+                    </button>
+                </form>
+            </section>
         </div>
     </main>
 
