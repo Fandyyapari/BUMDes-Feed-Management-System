@@ -11,6 +11,8 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class CustomerPasswordResetController extends Controller
 {
@@ -54,17 +56,26 @@ class CustomerPasswordResetController extends Controller
             'email.max' => 'Email maksimal 255 karakter.',
         ]);
 
-        // Fitur ini khusus untuk akun pelanggan.
-        Password::broker('users')->sendResetLink([
-            'email' => $validated['email'],
-            'role' => 'pelanggan',
-        ]);
+        try {
+            // Fitur ini khusus untuk akun pelanggan.
+            Password::broker('users')->sendResetLink([
+                'email' => $validated['email'],
+                'role' => 'pelanggan',
+            ]);
+        } catch (TransportExceptionInterface $exception) {
+            // Catat kegagalan tanpa menyimpan sandi atau tautan reset.
+            Log::warning('Pengiriman email reset pelanggan gagal.', [
+                'exception_class' => get_class($exception),
+                'exception_code' => $exception->getCode(),
+            ]);
+        }
 
+        // Pesan sama untuk email terdaftar maupun tidak terdaftar.
         return back()->with(
             'status',
-            'Jika email terdaftar sebagai pelanggan, tautan reset akan '
-                . 'dikirim ke email tersebut. Periksa kotak masuk dan folder spam. '
-                . 'Jika baru meminta tautan, tunggu sebentar sebelum mencoba lagi.'
+            'Jika email terdaftar, kami akan mencoba mengirim tautan reset. '
+                . 'Periksa kotak masuk dan spam. Jika belum diterima, '
+                . 'coba lagi beberapa menit kemudian atau hubungi pengurus.'
         );
     }
 
