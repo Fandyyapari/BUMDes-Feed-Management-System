@@ -304,6 +304,29 @@
                 justify-content: flex-start;
             }
         }
+
+        .product-card .product-image,
+        .product-card .image-placeholder {
+            width: 100%;
+            height: 260px;
+            box-sizing: border-box;
+            flex-shrink: 0;
+            background: #edf2e7;
+        }
+
+        .product-card .product-image {
+            display: block;
+            object-fit: contain;
+            padding: 12px;
+        }
+
+        .product-card .image-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
     </style>
 </head>
 
